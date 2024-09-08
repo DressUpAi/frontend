@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@/components/ui/button"
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +17,7 @@ const Login = () => {
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-800 via-blue-600 to-blue-500">
       <div className="bg-white p-10 rounded-3xl shadow-2xl w-full sm:w-[480px] flex flex-col justify-between border border-gray-200 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
         <div className="flex justify-around mb-8">
+           <Button>Click me</Button>
           <button
             className={`px-8 py-3 rounded-full text-lg font-semibold transition-all duration-300 ${
               isLogin
