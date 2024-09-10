@@ -8,8 +8,8 @@ const Login = () => {
     setShowSuccess(true);
     setTimeout(() => {
       setShowSuccess(false);
-      setIsLogin(true); // Switch to login page
-    }, 2000); // 2 seconds delay before switching to login
+      setIsLogin(true);
+    }, 2000); 
   };
 
   return (
@@ -82,7 +82,6 @@ const LoginForm = () => {
       return;
     }
 
-    // Proceed to login
     console.log("Login Form Submitted", { email, password });
   };
 
@@ -169,10 +168,8 @@ const RegisterForm = ({ onSuccess }) => {
       setErrors(newErrors);
       return;
     }
-
-    // Proceed to registration
     console.log("Registration Form Submitted", { username, email, password });
-    onSuccess(); // Trigger success popup
+    onSuccess(); 
   };
 
   return (
