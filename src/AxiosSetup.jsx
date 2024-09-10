@@ -4,7 +4,7 @@ import { useUser } from './Context';
 
 const AxiosSetup = () => {
   const {token, setToken, Auth, setAuth, userInfo, setUserInfo } = useUser();
-  axios.defaults.baseURL = 'http://localhost:8080';
+  axios.defaults.baseURL = 'http://localhost:8080/api';
 
   useEffect(() => {
     const requestInterceptor = axios.interceptors.request.use(
