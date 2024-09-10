@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button"
 
 const Arr_img = ({data, setFunction}) => {
-  console.log(data);
   const string = `data:image/png;base64, ${data.imageUrl}`;
   return (
     <>
@@ -22,50 +21,79 @@ export default function Dashboard() {
   const [cloth, setCloth] = useState(null);
   const [person, setPerson] = useState(null);
   const [result, setResult] = useState(null);
+
   const [clothArray, setClothArray] = useState([]);
   const [personArray, setPersonArray] = useState([]);
+
+  const [clothIsLoading, setClothIsLoading] = useState(false);
+  const [personIsLoading, setPersonIsLoading] = useState(false);
+
   const { userInfo, Auth } = useUser();
 
   //TODO
+  // useEffect(()=>{
+  //   const getClothData = async() => {
+  //     if(!Auth){
+  //       try{
+  //         const response = await axios.get('/default/clothes');
+  //         if(response.status == 200)
+  //           setClothArray(response.data);
+  //       } catch(e){
+  //         console.log("error in fetching default clothes");
+  //         console.log(e);
+  //       }
+  //       try{
+  //         const response = await axios.get('/default/person');
+  //         if(response.status == 200)
+  //           setPersonArray(response.data);
+  //       } catch(e){
+  //         console.log("error in fetching defaulth person");
+  //         console.log(e);
+  //       }
+  //     }else{
+  //                   } 
+  //   }
+  //   getClothData();
+  // },[])
+
   useEffect(()=>{
-    const getData = async() => {
-      if(!Auth){
+    if(!Auth){
+      const getClothNoAuth = async() => {
         try{
+          setClothIsLoading(true);
           const response = await axios.get('/default/clothes');
-          if(response.status == 200)
+          if(response.status == 200){
             setClothArray(response.data);
+            setClothIsLoading(false);
+          }
         } catch(e){
+          setClothIsLoading(false);
           console.log("error in fetching default clothes");
           console.log(e);
         }
-        try{
-          const response = await axios.get('/default/person');
-          if(response.status == 200)
-            setPersonArray(response.data);
-        } catch(e){
-          console.log("error in fetching defaulth person");
-          console.log(e);
-        }
-      }else{
-        try{
-          const response = await axios.get('/default/clothes');
-          if(response.status == 200)
-            setClothArray(response.data);
-        } catch(e){
-          console.log("error in fetching default clothes");
-          console.log(e);
-        }
-        try{
-          const response = await axios.get('/default/person');
-          if(response.status == 200)
-            setPersonArray(response.data);
-        } catch(e){
-          console.log("error in fetching defaulth person");
-          console.log(e);
-        }
-      } 
+      }
+      getClothNoAuth();
     }
-    getData();
+  },[])
+
+  useEffect(()=>{
+    if(!Auth){
+      const getPersonNoAuth = async() => {
+        try{
+          setPersonIsLoading(true);
+          const response = await axios.get('/default/person');
+          if(response.status == 200){
+            setPersonArray(response.data);
+            setPersonIsLoading(false);
+          }
+        } catch(e){
+          setPersonIsLoading(false);
+          console.log("error in fetching defaulth person");
+          console.log(e);
+        }
+      }
+      getPersonNoAuth();
+    }
   },[])
 
   return (
@@ -79,11 +107,14 @@ export default function Dashboard() {
               )} 
             </div>
             <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
-              {clothArray.map((item, index)=>(
-                <Arr_img key={index} data={item} setFunction={setCloth}/>))}
-              <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
-                <FontAwesomeIcon icon={faPlus}/>
-              </div>
+              {
+                clothIsLoading ? <div>Loading</div> : <>
+                  {clothArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setCloth}/>))}
+                  <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
+                    <FontAwesomeIcon icon={faPlus}/>
+                  </div>
+                </>
+              }
             </div>
           </div> 
           <div className="grid sm:grid-cols-2 gap-2 p-2 sm:h-[45vh]"> 
@@ -93,10 +124,15 @@ export default function Dashboard() {
               )} 
             </div>
             <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
-              {personArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setPerson}/>))}
-             <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
-                <FontAwesomeIcon icon={faPlus}/>
-              </div>
+              {
+                personIsLoading ? <div>Loading</div> :  <>
+                  {personArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setPerson}/>))}
+                  <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
+                    <FontAwesomeIcon icon={faPlus}/>
+                  </div>
+                </>
+
+              }            
             </div>
           </div> 
         </div> 
