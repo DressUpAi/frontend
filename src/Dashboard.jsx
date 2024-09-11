@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from 'axios';
 import {useUser}  from "./Context";
 import { useEffect, useState } from "react";
+import { ClipLoader } from "react-spinners";
 import { Button } from "@/components/ui/button"
 
 const Arr_img = ({data, setFunction}) => {
@@ -108,13 +109,17 @@ export default function Dashboard() {
             </div>
             <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
               {
-                clothIsLoading ? <div>Loading</div> : <>
+                clothIsLoading ? (
+                  <div className="flex justify-center items-center">
+                    <ClipLoader  color={"#123abc"} loading={clothIsLoading} size={50} />
+                  </div>
+                ) : (<>
                   {clothArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setCloth}/>))}
                   <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
                     <FontAwesomeIcon icon={faPlus}/>
                   </div>
                 </>
-              }
+              )}
             </div>
           </div> 
           <div className="grid sm:grid-cols-2 gap-2 p-2 sm:h-[45vh]"> 
@@ -125,14 +130,17 @@ export default function Dashboard() {
             </div>
             <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
               {
-                personIsLoading ? <div>Loading</div> :  <>
+                personIsLoading ? (
+                  <div className="flex justify-center items-center">
+                    <ClipLoader  color={"#123abc"} loading={personIsLoading} size={50} />
+                  </div>
+                ) :  (<>
                   {personArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setPerson}/>))}
                   <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
                     <FontAwesomeIcon icon={faPlus}/>
                   </div>
                 </>
-
-              }            
+              )}            
             </div>
           </div> 
         </div> 
