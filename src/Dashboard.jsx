@@ -31,36 +31,71 @@ export default function Dashboard() {
 
   const { userInfo, Auth } = useUser();
 
-  //TODO
-  // useEffect(()=>{
-  //   const getClothData = async() => {
-  //     if(!Auth){
-  //       try{
-  //         const response = await axios.get('/default/clothes');
-  //         if(response.status == 200)
-  //           setClothArray(response.data);
-  //       } catch(e){
-  //         console.log("error in fetching default clothes");
-  //         console.log(e);
-  //       }
-  //       try{
-  //         const response = await axios.get('/default/person');
-  //         if(response.status == 200)
-  //           setPersonArray(response.data);
-  //       } catch(e){
-  //         console.log("error in fetching defaulth person");
-  //         console.log(e);
-  //       }
-  //     }else{
-  //                   } 
-  //   }
-  //   getClothData();
-  // },[])
+  useEffect(()=>{
+    const getPersonAuth = async() => {
+      if(Auth){
+        try{
+          setPersonIsLoading(true);
+          const response = await axios.get('/person');
+          if(response.status == 200){
+            setPersonArray(response.data);
+            setPersonIsLoading(false);
+          }
+        } catch(e){
+          setClothIsLoading(false);
+          console.log("error in fetching defaulth person");
+          console.log(e);
+        }
+      }
+    }
+    getPersonAuth();
+  },[Auth])
 
-  useEffect(() => {
-    if (!Auth) {
-      const getClothNoAuth = async () => {
-        try {
+ useEffect(()=>{
+    const getClothAuth = async() => {
+      if(Auth){
+        try{
+          setClothIsLoading(true);
+          const response = await axios.get('/clothes');
+          if(response.status == 200){
+            setClothArray(response.data);
+            setClothIsLoading(false);
+          }
+        } catch(e){
+          setClothIsLoading(false);
+          console.log("error in fetching default clothes");
+          console.log(e);
+        }
+      }
+    }
+    getClothAuth();
+  },[Auth])
+
+  useEffect(()=>{
+    const getPersonNoAuth = async() => {
+      if(!Auth){
+        try{
+          setPersonIsLoading(true);
+          const response = await axios.get('/default/person');
+          if(response.status == 200){
+            setPersonArray(response.data);
+            console.log(response);
+            setPersonIsLoading(false);
+          }
+        } catch(e){
+          setPersonIsLoading(false);
+          console.log("error in fetching defaulth person");
+          console.log(e);
+        }
+      }
+    }
+    getPersonNoAuth();
+  },[Auth])
+
+  useEffect(()=>{
+    const getClothNoAuth = async() => {
+      if(!Auth){
+        try{
           setClothIsLoading(true);
           const response = await axios.get('/default/clothes');
           if (response.status == 200) {
@@ -72,30 +107,11 @@ export default function Dashboard() {
           console.log("error in fetching default clothes");
           console.log(e);
         }
-      }
-      getClothNoAuth();
+      } 
     }
-  }, [])
+   getClothNoAuth();
+  },[Auth])
 
-  useEffect(() => {
-    if (!Auth) {
-      const getPersonNoAuth = async () => {
-        try {
-          setPersonIsLoading(true);
-          const response = await axios.get('/default/person');
-          if (response.status == 200) {
-            setPersonArray(response.data);
-            setPersonIsLoading(false);
-          }
-        } catch (e) {
-          setPersonIsLoading(false);
-          console.log("error in fetching defaulth person");
-          console.log(e);
-        }
-      }
-      getPersonNoAuth();
-    }
-  }, [])
 
   return (
     <>
@@ -113,10 +129,12 @@ export default function Dashboard() {
                   <ClipLoader color='black' loading={clothIsLoading} size={50} />
                 </div>
               ) :
-                <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
-                  {clothArray.map((item, index) => (<Arr_img key={index} data={item} setFunction={setCloth} />))}
-                  <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
-                    <FontAwesomeIcon icon={faPlus} />
+                <div className="sm:grid sm:grid-cols-3 flex flex-row flex-grow gap-2 items-start p-2 overflow-y-auto sm:overflow-x-auto">
+                  {clothArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setCloth}/>))}
+                  <div className="h-[15vh] sm:w-[13vh] sm:flex-initial flex-none w-[11vh]">
+                    <div className="flex flex-row items-center justify-center border-2 h-full rounded-lg">
+                      <FontAwesomeIcon icon={faPlus}/>
+                    </div>
                   </div>
                 </div>
             }
@@ -134,9 +152,11 @@ export default function Dashboard() {
                 </div>
               ) :
                 <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
-                  {personArray.map((item, index) => (<Arr_img key={index} data={item} setFunction={setPerson} />))}
-                  <div className="h-[15vh] w-[13vh] border-2 rounded-md flex flex-row justify-center items-center">
-                    <FontAwesomeIcon icon={faPlus} />
+                  {personArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setPerson}/>))}
+                  <div className="h-[15vh] sm:w-[13vh] w-[11vh]"> 
+                    <div className="flex flex-row items-center justify-center border-2 rounded-lg h-full">
+                      <FontAwesomeIcon icon={faPlus}/>
+                    </div>
                   </div>
                 </div>
             }
