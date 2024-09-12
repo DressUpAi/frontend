@@ -28,6 +28,7 @@ export default function Dashboard() {
 
   const [clothIsLoading, setClothIsLoading] = useState(true);
   const [personIsLoading, setPersonIsLoading] = useState(true);
+  const [resultIsLoading, setResultIsLoading] = useState(false);
 
   const { userInfo, Auth } = useUser();
 
@@ -112,6 +113,27 @@ export default function Dashboard() {
    getClothNoAuth();
   },[Auth])
 
+  const handlePredict = async() => {
+    try{
+      if(!cloth || !person){
+        return;
+      }
+      setResult(null);
+      setResultIsLoading(true);
+      const response = await axios.post('/predict',{
+        image : person,
+        cloth: cloth
+      });
+      if(response.status === 200){
+        setResultIsLoading(false);
+        setResult(response.data.image);
+      } 
+    } catch(e){
+      setResultIsLoading(false);
+      console.log("error in doing prediction");
+      console.log(e);
+    }
+  } 
 
   return (
     <>
@@ -163,12 +185,19 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="flex flex-col justify-center items-center space-y-3">
-          <div className="border-2 h-[47vh] rounded-lg w-[40vh]">
-            {result && (
-              <img className="h-[47vh] rounded-lg" src={`data:image/png;base64, ${cloth}`} />
-            )}
-          </div>
-          <Button>Submit</Button>
+          <div className="border-2 h-[47vh] flex flex-row items-center justify-center rounded-lg w-[40vh]">
+        {
+          resultIsLoading ? (
+                <div className="flex justify-center items-center">
+                  <ClipLoader color='black' loading={setResultIsLoading} size={50} />
+                </div>
+              ) :
+            result && (
+              <img className="h-[47vh] rounded-lg" src={`data:image/png;base64, ${result}`} />
+            )
+        }
+        </div>
+          <Button onClick={handlePredict}>Submit</Button>
         </div>
       </div>
     </>
