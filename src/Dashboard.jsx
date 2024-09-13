@@ -141,28 +141,6 @@ export default function Dashboard() {
         <div className="grid grid-rows-2 gap-4">
           <div className="grid sm:grid-cols-2 gap-2 p-2 sm:h-[45vh]">
             <div className="border-2 border-dashed h-[46vh] rounded-lg flex flex-row items-center justify-center">
-              {cloth && (
-                <img className="h-[45vh] max-w-full lounded-lg" src={`data:image/png;base64, ${cloth}`} />
-              )}
-            </div>
-            {
-              clothIsLoading ? (
-                <div className="flex justify-center items-center">
-                  <ClipLoader color='black' loading={clothIsLoading} size={50} />
-                </div>
-              ) :
-                <div className="sm:grid sm:grid-cols-3 flex flex-row flex-grow gap-2 items-start p-2 overflow-y-auto sm:overflow-x-auto">
-                  {clothArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setCloth}/>))}
-                  <div className="h-[15vh] sm:w-[13vh] sm:flex-initial flex-none w-[11vh]">
-                    <div className="flex flex-row items-center justify-center border-2 h-full rounded-lg">
-                      <FontAwesomeIcon icon={faPlus}/>
-                    </div>
-                  </div>
-                </div>
-            }
-          </div>
-          <div className="grid sm:grid-cols-2 gap-2 p-2 sm:h-[45vh]">
-            <div className="border-2 border-dashed h-[46vh] rounded-lg flex flex-row items-center justify-center">
               {person && (
                 <img className="max-w-full rounded-lg h-[45vh]" src={`data:image/png;base64, ${person}`} />
               )}
@@ -173,10 +151,32 @@ export default function Dashboard() {
                   <ClipLoader color='black' loading={personIsLoading} size={50} />
                 </div>
               ) :
-                <div className="sm:grid sm:grid-cols-3 flex flex-row gap-2 p-2 overflow-y-auto sm:overflow-x-auto">
+                <div className="sm:grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:w-full flex flex-row flex-grow gap-2 items-start p-2 overflow-y-auto sm:overflow-x-auto">
                   {personArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setPerson}/>))}
-                  <div className="h-[15vh] sm:w-[13vh] w-[11vh]"> 
+                  <div className="h-[15vh] sm:w-[13vh] sm:flex-initial flex-none w-[11vh]"> 
                     <div className="flex flex-row items-center justify-center border-2 rounded-lg h-full">
+                      <FontAwesomeIcon icon={faPlus}/>
+                    </div>
+                  </div>
+                </div>
+            }
+          </div>
+          <div className="grid sm:grid-cols-2 gap-2 p-2 sm:h-[45vh]">
+            <div className="border-2 border-dashed h-[46vh] rounded-lg flex flex-row items-center justify-center">
+              {cloth && (
+                <img className="h-[45vh] max-w-full lounded-lg" src={`data:image/png;base64, ${cloth}`} />
+              )}
+            </div>
+            {
+              clothIsLoading ? (
+                <div className="flex justify-center items-center">
+                  <ClipLoader color='black' loading={clothIsLoading} size={50} />
+                </div>
+              ) :
+                <div className="sm:grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:w-full flex flex-row flex-grow gap-2 items-start p-2 overflow-y-auto sm:overflow-x-auto">
+                  {clothArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setCloth}/>))}
+                  <div className="h-[15vh] sm:w-[13vh] sm:flex-initial flex-none w-[11vh]">
+                    <div className="flex flex-row items-center justify-center border-2 h-full rounded-lg">
                       <FontAwesomeIcon icon={faPlus}/>
                     </div>
                   </div>
