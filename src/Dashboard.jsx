@@ -2,12 +2,13 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from 'axios';
 import { useUser } from "./Context";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef} from "react";
 import { ClipLoader } from "react-spinners";
 import { Button } from "@/components/ui/button"
+import getCroppedImg from "./cropImage";
 
 const Arr_img = ({ data, setFunction }) => {
-  const string = `data:image/png;base64, ${data.imageUrl}`;
+  const string = `data:image/jpeg;base64, ${data.imageUrl}`;
   return (
     <>
       <img src={string} className="h-[15vh] w-[13vh] rounded-md" alt="Image Description" onClick={() => {
@@ -30,7 +31,28 @@ export default function Dashboard() {
   const [personIsLoading, setPersonIsLoading] = useState(true);
   const [resultIsLoading, setResultIsLoading] = useState(false);
 
+  const [imageSrc, setImageSrc] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [croppedImage, setCroppedImage] = useState(null);
+
+  const fileInputRef = useRef(null);
+
   const { userInfo, Auth } = useUser();
+
+  const onCropComplete = useCallback((_, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels, 384, 512);
+      setCroppedImage(croppedImage);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [imageSrc, croppedAreaPixels]);
 
   useEffect(()=>{
     const getPersonAuth = async() => {
@@ -52,7 +74,28 @@ export default function Dashboard() {
     getPersonAuth();
   },[Auth])
 
- useEffect(()=>{
+
+  const handlePlusClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileUpload = async(e) => {
+   const file = e.target.files[0];
+   if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result.split(',')[1];  
+        console.log(base64String)
+        setClothArray(arr =>[...arr,base64String]);
+      }
+    reader.readAsDataURL(file);
+
+    }
+  }
+
+  useEffect(()=>{
     const getClothAuth = async() => {
       if(Auth){
         try{
@@ -110,7 +153,7 @@ export default function Dashboard() {
         }
       } 
     }
-   getClothNoAuth();
+    getClothNoAuth();
   },[Auth])
 
   const handlePredict = async() => {
@@ -175,9 +218,15 @@ export default function Dashboard() {
               ) :
                 <div className="sm:grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 md:w-full flex flex-row flex-grow gap-2 items-start p-2 overflow-y-auto sm:overflow-x-auto">
                   {clothArray.map((item, index)=>(<Arr_img key={index} data={item} setFunction={setCloth}/>))}
-                  <div className="h-[15vh] sm:w-[13vh] sm:flex-initial flex-none w-[11vh]">
+                  <div className="h-[15vh] sm:w-[13vh] sm:flex-initial flex-none w-[11vh]" onClick={handlePlusClick}>              
                     <div className="flex flex-row items-center justify-center border-2 h-full rounded-lg">
-                      <FontAwesomeIcon icon={faPlus}/>
+                      <input 
+                        type="file" 
+                        accept='image/*' 
+                        onChange={handleFileUpload} 
+                        ref={fileInputRef}             
+                        className="hidden" 
+                      />                      <FontAwesomeIcon icon={faPlus}/>
                     </div>
                   </div>
                 </div>
@@ -186,18 +235,25 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-col justify-center items-center space-y-3">
           <div className="border-2 h-[47vh] flex flex-row items-center justify-center rounded-lg w-[40vh]">
-        {
-          resultIsLoading ? (
+            {
+              resultIsLoading ? (
                 <div className="flex justify-center items-center">
                   <ClipLoader color='black' loading={setResultIsLoading} size={50} />
                 </div>
               ) :
-            result && (
-              <img className="h-[47vh] rounded-lg" src={`data:image/png;base64, ${result}`} />
-            )
-        }
-        </div>
-          <Button onClick={handlePredict}>Submit</Button>
+                result && (
+                  <img className="h-[47vh] rounded-lg" src={`data:image/png;base64, ${result}`} />
+                )
+            }
+          </div>
+          {!resultIsLoading ?
+
+            <Button onClick={handlePredict}>Submit</Button>
+            :
+            <Button disabled>
+              Please wait
+            </Button>
+          }
         </div>
       </div>
     </>
